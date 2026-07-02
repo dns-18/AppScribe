@@ -1,0 +1,90 @@
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import appwriteService from "../appwrite/config";
+import { Button, Container } from "../components";
+import parse from "html-react-parser";
+import { useSelector } from "react-redux";
+import { motion } from 'framer-motion';
+
+export default function Post() {
+    const [post, setPost] = useState(null);
+    const [imageError, setImageError] = useState(false);
+    const { slug } = useParams();
+    const navigate = useNavigate();
+
+    const userData = useSelector((state) => state.auth.userData);
+
+    const postUserId = post?.UserId || post?.userId;
+    const isAuthor = post && userData ? postUserId === userData.$id || !postUserId : false;
+    const featuredImage = post?.FeaturedImage || post?.featuredImage;
+
+    useEffect(() => {
+        setImageError(false);
+
+        if (slug) {
+            appwriteService.getPost(slug).then((post) => {
+                if (post) setPost(post);
+                else navigate("/");
+            });
+        } else navigate("/");
+    }, [slug, navigate]);
+
+    const deletePost = () => {
+        appwriteService.deletePost(post.$id).then((status) => {
+            if (status) {
+                if (featuredImage) {
+                    appwriteService.deleteFile(featuredImage);
+                }
+                navigate("/");
+            }
+        });
+    };
+
+    return post ? (
+        <motion.div
+            className="py-10"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+            <Container>
+                <div className="mb-8 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.08)] animate-scale-in dark:border-slate-800 dark:bg-slate-900/90">
+                    {featuredImage && !imageError ? (
+                        <img
+                            src={appwriteService.getFileView(featuredImage)}
+                            alt={post.title}
+                            className="max-h-[620px] w-full rounded-[1.5rem] object-cover transition-transform duration-700 hover:scale-[1.01]"
+                            onError={() => setImageError(true)}
+                        />
+                    ) : (
+                        <div className="flex h-[320px] w-full items-center justify-center rounded-[1.5rem] bg-slate-100 text-sm font-medium text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                            {featuredImage ? "Image could not be loaded" : "No Image"}
+                        </div>
+                    )}
+
+                    {isAuthor && (
+                        <div className="absolute right-6 top-6 flex gap-2">
+                            <Link to={`/edit-post/${post.$id}`}>
+                                <Button bgColor="bg-emerald-600">
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Button bgColor="bg-rose-600" onClick={deletePost}>
+                                Delete
+                            </Button>
+                        </div>
+                    )}
+                </div>
+                <div className="mb-6 max-w-4xl animate-fade-up">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-indigo-500">Post detail</p>
+                    <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">{post.title}</h1>
+                </div>
+                <div className="glass-panel rounded-[2rem] px-6 py-8 sm:px-10 animate-fade-up stagger-1">
+                    <div className="browser-css">
+                        {parse(post.content)}
+                    </div>
+                </div>
+            </Container>
+        </motion.div>
+    ) : null;
+}
