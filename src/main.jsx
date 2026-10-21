@@ -21,6 +21,7 @@ import Signup from './pages/Signup.jsx'
 import EditPost from './pages/EditPost.jsx'
 import Post from './pages/Post.jsx'
 import AllPosts from './pages/AllPosts.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 import {
   AuthLayout,
@@ -91,7 +92,7 @@ const router = createBrowserRouter([
 
       {
         path: '*',
-        element: <h1>404 Page Not Found</h1>,
+        element: <NotFound />,
       },
 
     ],

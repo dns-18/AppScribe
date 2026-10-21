@@ -92,12 +92,13 @@ import React, { useState } from 'react'
 import authService from '../appwrite/auth'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../store/authSlice'
-import { Button, Input, Logo } from './index.js'
+import { Button, Container, Input, Logo } from './index.js'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import heroIllustration from '../assets/hero-illustration.svg'
 
 function Signup() {
   const navigate = useNavigate()
@@ -122,12 +123,29 @@ function Signup() {
 
   return (
     <motion.div
-      className="flex min-h-[calc(100vh-160px)] w-full items-center justify-center px-4 py-10"
+      className="w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
-      <Card className="mx-auto w-full max-w-md motion-sheen">
+      <div className="w-full py-10">
+        <Container>
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            <div className="relative hidden overflow-hidden rounded-[2rem] bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 p-10 text-white lg:block">
+              <img
+                src={heroIllustration}
+                alt=""
+                aria-hidden="true"
+                className="mx-auto w-full max-w-sm rounded-3xl bg-white/95 p-4"
+              />
+              <h2 className="mt-8 text-2xl font-bold tracking-tight">
+                Start publishing in minutes.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-indigo-100">
+                Create an account to write, review, and manage your posts in one clean dashboard.
+              </p>
+            </div>
+            <Card className="mx-auto w-full max-w-md motion-sheen lg:mx-0">
 
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
@@ -193,7 +211,10 @@ function Signup() {
             </div>
           </form>
         </CardContent>
-      </Card>
+            </Card>
+          </div>
+        </Container>
+      </div>
     </motion.div>
   )
 }

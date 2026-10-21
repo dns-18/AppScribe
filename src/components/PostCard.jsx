@@ -15,7 +15,7 @@ import {
 import { CalendarDays, Clock, Pencil, Trash2 } from 'lucide-react'
 import { pickCover } from '../lib/covers'
 
-function PostCard({ $id, title, featuredImage, FeaturedImage, $createdAt, content, canManage = false, onDelete }) {
+function PostCard({ $id, title, featuredImage, FeaturedImage, $createdAt, content, canManage = false, onDelete, featured = false }) {
   const navigate = useNavigate()
   const imageId = FeaturedImage || featuredImage
   const [imageError, setImageError] = useState(false)
@@ -65,8 +65,8 @@ function PostCard({ $id, title, featuredImage, FeaturedImage, $createdAt, conten
         </div>
 
         <CardContent className='space-y-4 p-5'>
-          <Badge variant='outline' className='w-fit'>
-            Post
+          <Badge variant={featured ? 'default' : 'outline'} className='w-fit'>
+            {featured ? 'Featured' : 'Post'}
           </Badge>
           <h2 className='line-clamp-2 text-lg font-semibold leading-snug text-slate-900 dark:text-slate-50'>
             {title}

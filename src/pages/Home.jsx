@@ -107,8 +107,8 @@ function Home() {
                                 </div>
                                 <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
                     {posts.map((post, index) => (
-                                                                <div key={post.$id} data-reveal className='post-card-item h-full hover-lift'>
-                            <PostCard {...post} />
+                                                                <div key={post.$id} data-reveal className={`post-card-item h-full hover-lift${index === 0 ? ' sm:col-span-2' : ''}`}>
+                            <PostCard {...post} featured={index === 0} />
                         </div>
                     ))}
                 </div>

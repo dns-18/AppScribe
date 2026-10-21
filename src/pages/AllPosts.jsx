@@ -3,15 +3,17 @@ import { Container, PostCard, Button } from '../components'
 import appwriteService from "../appwrite/config";
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { PenLine } from 'lucide-react';
+import { PenLine, Search, SearchX, X } from 'lucide-react';
 import emptyPosts from '../assets/empty-posts.svg';
 import { motion } from 'framer-motion';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { Skeleton } from '../components/ui/skeleton';
+import { Input } from '../components/ui/input';
 import { toast } from 'sonner';
 
 function AllPosts() {
     const [posts, setPosts] = useState([])
+    const [query, setQuery] = useState('')
     const [loading, setLoading] = useState(true)
     const userData = useSelector((state) => state.auth.userData)
     const pageRef = useRef(null)
@@ -25,6 +27,17 @@ function AllPosts() {
             }
         }).finally(() => setLoading(false))
     }, [])
+
+    const normalizedQuery = query.trim().toLowerCase()
+    const filteredPosts = normalizedQuery
+        ? posts.filter((post) => {
+            const title = (post.title || '').toLowerCase()
+            const text = post.content
+                ? post.content.replace(/<[^>]*>/g, ' ').toLowerCase()
+                : ''
+            return title.includes(normalizedQuery) || text.includes(normalizedQuery)
+        })
+        : posts
 
     const canManagePost = (post) => {
         if (!userData) return false
@@ -62,6 +75,25 @@ function AllPosts() {
                 <h1 className='mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl'>Manage every post from one clean view.</h1>
                 <p className='mt-4 text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base'>Edit, delete, or review content in a layout that feels more like a product than a template.</p>
             </div>
+            {!loading && (
+                <div className='mb-8'>
+                    <div className='relative max-w-md'>
+                        <Search className='pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400' />
+                        <Input
+                            type='text'
+                            value={query}
+                            onChange={(event) => setQuery(event.target.value)}
+                            placeholder='Search posts by title or keyword…'
+                            className='rounded-full pl-11'
+                        />
+                    </div>
+                    <p className='mt-3 text-sm text-slate-500 dark:text-slate-400'>
+                        {query
+                            ? `${filteredPosts.length} ${filteredPosts.length === 1 ? 'result' : 'results'} for "${query}"`
+                            : `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
+                    </p>
+                </div>
+            )}
             {loading ? (
                 <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
                     {Array.from({ length: 8 }).map((_, i) => (
@@ -89,9 +121,21 @@ function AllPosts() {
                         </Button>
                     </div>
                 </div>
+            ) : filteredPosts.length === 0 ? (
+                <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/90 px-6 py-16 text-center dark:border-slate-800 dark:bg-slate-900/90">
+                    <SearchX className='mx-auto h-10 w-10 text-slate-400 dark:text-slate-500' />
+                    <h2 className='mt-6 text-xl font-semibold text-slate-900 dark:text-slate-50'>{`No posts match "${query}"`}</h2>
+                    <p className='mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400'>Try a different title or keyword, or clear the search to see every post again.</p>
+                    <div className='mt-6 flex justify-center'>
+                        <Button variant='outline' onClick={() => setQuery('')}>
+                            <X className='h-4 w-4' />
+                            Clear search
+                        </Button>
+                    </div>
+                </div>
             ) : (
             <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
-                {posts.map((post) => (
+                {filteredPosts.map((post) => (
                     <div key={post.$id} data-reveal className='h-full hover-lift'>
                         <PostCard
                             {...post}
