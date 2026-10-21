@@ -3,7 +3,8 @@ import appwriteService from "../appwrite/config";
 import {Container, PostCard, Button} from '../components'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import gsap from 'gsap'
+import { gsap } from '../lib/gsap'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 function Home() {
     const [posts, setPosts] = useState([])
@@ -28,25 +29,13 @@ function Home() {
                 .fromTo('.hero-copy', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.55')
                 .fromTo('.hero-cta', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.75, stagger: 0.08 }, '-=0.45')
                 .fromTo('.hero-stats', { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.7 }, '-=0.3')
-
-            gsap.fromTo(
-                '.post-card-item',
-                { opacity: 0, y: 30, scale: 0.98 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.8,
-                    stagger: 0.08,
-                    ease: 'power3.out',
-                    scrollTrigger: undefined,
-                }
-            )
         }, homeRef)
 
         return () => ctx.revert()
     }, [posts.length])
-  
+
+    useScrollReveal(homeRef, [posts.length])
+
     if (posts.length === 0) {
         return (
                         <div ref={homeRef} className="w-full py-10">
@@ -79,14 +68,14 @@ function Home() {
     return (
                 <div ref={homeRef} className='w-full py-10'>
             <Container>
-                                <div className='mb-8 max-w-2xl animate-fade-up'>
+                                <div data-reveal className='mb-8 max-w-2xl'>
                                                         <p className='text-xs font-semibold uppercase tracking-[0.24em] text-indigo-500'>Featured posts</p>
                                                                                                 <h1 className='mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl'>Latest stories from the team.</h1>
                                                                                                 <p className='mt-4 text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base'>Browse the most recent posts in a more editorial, recruiter-friendly layout.</p>
                                 </div>
                                 <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
                     {posts.map((post, index) => (
-                                                                <div key={post.$id} className='post-card-item h-full animate-fade-up hover-lift' style={{ animationDelay: `${Math.min(4, index) * 90}ms` }}>
+                                                                <div key={post.$id} data-reveal className='post-card-item h-full hover-lift'>
                             <PostCard {...post} />
                         </div>
                     ))}
