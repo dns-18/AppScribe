@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import appwriteService from "../appwrite/config"
 import { Link, useNavigate } from 'react-router-dom'
-import Button from './Button'
+import { Button } from './ui/button'
 import { Card, CardContent, CardFooter } from './ui/card'
 import { Badge } from './ui/badge'
 
