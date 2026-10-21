@@ -1,7 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { Container, PostCard } from '../components'
+import { Container, PostCard, Button } from '../components'
 import appwriteService from "../appwrite/config";
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { PenLine } from 'lucide-react';
+import emptyPosts from '../assets/empty-posts.svg';
 import { motion } from 'framer-motion';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { Skeleton } from '../components/ui/skeleton';
@@ -71,6 +74,20 @@ function AllPosts() {
                             </div>
                         </div>
                     ))}
+                </div>
+            ) : posts.length === 0 ? (
+                <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/90 px-6 py-16 text-center dark:border-slate-800 dark:bg-slate-900/90">
+                    <img src={emptyPosts} alt="" aria-hidden="true" className="mx-auto w-52" />
+                    <h2 className='mt-6 text-xl font-semibold text-slate-900 dark:text-slate-50'>No posts yet</h2>
+                    <p className='mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400'>When you publish your first post, it will show up here.</p>
+                    <div className='mt-6 flex justify-center'>
+                        <Button asChild>
+                            <Link to="/add-post">
+                                <PenLine className='h-4 w-4' />
+                                Create post
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
             ) : (
             <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>

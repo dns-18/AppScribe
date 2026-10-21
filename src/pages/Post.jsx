@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from "../components/ui/dialog";
 import parse from "html-react-parser";
+import { pickCover } from "../lib/covers";
 import { useSelector } from "react-redux";
 import { motion } from 'framer-motion';
 
@@ -66,9 +67,11 @@ export default function Post() {
                             onError={() => setImageError(true)}
                         />
                     ) : (
-                        <div className="flex h-[320px] w-full items-center justify-center rounded-[1.5rem] bg-slate-100 text-sm font-medium text-slate-400 dark:bg-slate-800 dark:text-slate-500">
-                            {featuredImage ? "Image could not be loaded" : "No Image"}
-                        </div>
+                        <img
+                            src={pickCover(post.$id || post.title || '')}
+                            alt=""
+                            className="h-[320px] w-full rounded-[1.5rem] object-cover"
+                        />
                     )}
 
                     {isAuthor && (

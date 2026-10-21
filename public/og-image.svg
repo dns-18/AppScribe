@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="markGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+    <radialGradient id="glowIndigo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#6366F1" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowSky" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0F172A"/>
+  <circle cx="1030" cy="100" r="290" fill="url(#glowIndigo)"/>
+  <circle cx="150" cy="545" r="270" fill="url(#glowSky)"/>
+  <g transform="translate(110 215)">
+    <rect width="200" height="200" rx="48" fill="url(#markGrad)"/>
+    <path d="M53.6 128.6 92.9 42.9l39.2 85.7Z" fill="#F8FAFC"/>
+    <path d="M92.9 78.6l46.4 50H92.9Z" fill="#C7D2FE"/>
+  </g>
+  <text x="370" y="308" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="700" fill="#FFFFFF">AppScribe</text>
+  <text x="372" y="368" font-family="Inter, Arial, sans-serif" font-size="36" fill="#CBD5E1">Publish, review, and manage content.</text>
+  <rect x="370" y="408" width="408" height="50" rx="25" stroke="#475569" stroke-width="2"/>
+  <text x="396" y="441" font-family="Inter, Arial, sans-serif" font-size="24" fill="#94A3B8">Built with React and Appwrite</text>
+</svg>

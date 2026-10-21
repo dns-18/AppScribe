@@ -12,7 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import { CalendarDays, Clock, ImageOff, Pencil, Trash2 } from 'lucide-react'
+import { CalendarDays, Clock, Pencil, Trash2 } from 'lucide-react'
+import { pickCover } from '../lib/covers'
 
 function PostCard({ $id, title, featuredImage, FeaturedImage, $createdAt, content, canManage = false, onDelete }) {
   const navigate = useNavigate()
@@ -53,10 +54,11 @@ function PostCard({ $id, title, featuredImage, FeaturedImage, $createdAt, conten
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className='flex h-full w-full flex-col items-center justify-center gap-2 text-sm font-medium text-slate-400 dark:text-slate-500'>
-                <ImageOff className='h-6 w-6' />
-                No Image
-              </div>
+              <img
+                src={pickCover($id || title || '')}
+                alt=""
+                className='h-full w-full object-cover'
+              />
             )}
           </div>
           <div className='absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/40 to-transparent dark:from-black/50' />
