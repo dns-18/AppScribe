@@ -72,8 +72,14 @@ function AllPosts() {
         <Container>
             <div data-reveal className='mb-8 max-w-2xl'>
                 <p className='text-xs font-semibold uppercase tracking-[0.24em] text-indigo-500'>All posts</p>
-                <h1 className='mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl'>Manage every post from one clean view.</h1>
-                <p className='mt-4 text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base'>Edit, delete, or review content in a layout that feels more like a product than a template.</p>
+                <h1 className='mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl'>
+                    {userData ? 'Manage every post from one clean view.' : 'Browse every published post.'}
+                </h1>
+                <p className='mt-4 text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base'>
+                    {userData
+                        ? 'Edit, delete, or review content in a layout that feels more like a product than a template.'
+                        : 'Read the latest writing from the AppScribe community. Sign in to publish and manage your own posts.'}
+                </p>
             </div>
             {!loading && (
                 <div className='mb-8'>
