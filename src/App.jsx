@@ -45,11 +45,23 @@ import { login, logout } from "./store/authSlice"
 import { Footer, Header } from './components'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useLenis } from './hooks/useLenis'
+import { ScrollTrigger } from './lib/gsap'
+import { scrollToTop } from './lib/lenis'
 
 function App() {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const location = useLocation()
+
+  useLenis()
+
+  useEffect(() => {
+    scrollToTop()
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh()
+    })
+  }, [location.pathname])
 
   useEffect(() => {
     authService.getCurrentUser()

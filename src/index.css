@@ -80,10 +80,6 @@ body,
 	min-height: 100%;
 }
 
-html {
-	scroll-behavior: smooth;
-}
-
 body {
 	margin: 0;
 	color: rgb(var(--fg));

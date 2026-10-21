@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 
 import './index.css'
 import './App.css'
+import 'lenis/dist/lenis.css'
 
 import App from './App.jsx'
 
