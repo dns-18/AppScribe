@@ -11,6 +11,7 @@ import PostForm from "./post-form/PostForm";
 import PostCard from "./PostCard";
 import AuthLayout from "./AuthLayout";
 import Input from "./Input";
+import PageLoader from "./PageLoader";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 export {
@@ -24,8 +25,9 @@ export {
     Button,
     PostForm,
     PostCard,
-    AuthLayout, 
+    AuthLayout,
     Input,
+    PageLoader,
     Select,
     Card,
     CardContent,

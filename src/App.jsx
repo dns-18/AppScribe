@@ -37,12 +37,12 @@
 
 // export default App
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useDispatch } from 'react-redux'
 import './App.css'
 import authService from "./appwrite/auth"
 import { login, logout } from "./store/authSlice"
-import { Footer, Header } from './components'
+import { Footer, Header, PageLoader } from './components'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useLenis } from './hooks/useLenis'
@@ -92,7 +92,9 @@ function App() {
           exit={{ opacity: 0, y: -12, filter: 'blur(8px)' }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </motion.main>
       </AnimatePresence>
 

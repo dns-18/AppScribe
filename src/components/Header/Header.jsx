@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { Home as HomeIcon, LogIn, UserPlus, BookOpen, PenLine, LogOut } from 'lucide-react'
+import { Home as HomeIcon, LogIn, UserPlus, BookOpen, PenLine, LogOut, Menu } from 'lucide-react'
 import authService from '../../appwrite/auth'
 import { logout } from '../../store/authSlice'
 
@@ -60,7 +60,7 @@ function Header() {
             </Link>
           </div>
 
-          <ul className="ml-auto flex flex-wrap items-center justify-end gap-2">
+          <ul className="ml-auto hidden flex-wrap items-center justify-end gap-2 md:flex">
             {navItems.map((item) => {
               if (!item.active) return null
               const Icon = item.icon
@@ -81,11 +81,41 @@ function Header() {
                 </li>
               )
             })}
-            <li>
-              <ThemeToggle />
-            </li>
+          </ul>
+
+          <div className="ml-auto flex items-center gap-2 md:ml-2">
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Open menu">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  {navItems.map((item) => {
+                    if (!item.active) return null
+                    const Icon = item.icon
+                    const isCurrent = location.pathname === item.slug
+                    return (
+                      <DropdownMenuItem
+                        key={item.name}
+                        onClick={() => navigate(item.slug)}
+                        className={
+                          isCurrent
+                            ? 'bg-slate-100 text-slate-950 dark:bg-slate-800 dark:text-white'
+                            : undefined
+                        }
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.name}
+                      </DropdownMenuItem>
+                    )
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <ThemeToggle />
             {authStatus && (
-              <li>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full">
@@ -123,9 +153,8 @@ function Header() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </li>
             )}
-          </ul>
+          </div>
 
         </nav>
       </Container>
