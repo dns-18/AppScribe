@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../components/ui/dialog";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { motion } from 'framer-motion';
@@ -9,6 +17,7 @@ import { motion } from 'framer-motion';
 export default function Post() {
     const [post, setPost] = useState(null);
     const [imageError, setImageError] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
     const { slug } = useParams();
     const navigate = useNavigate();
 
@@ -69,7 +78,7 @@ export default function Post() {
                                     Edit
                                 </Button>
                             </Link>
-                            <Button variant="destructive" onClick={deletePost}>
+                            <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
                                 Delete
                             </Button>
                         </div>
@@ -84,6 +93,30 @@ export default function Post() {
                         {parse(post.content)}
                     </div>
                 </div>
+                <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete this post?</DialogTitle>
+                            <DialogDescription>
+                                {`This permanently deletes "${post.title}" and cannot be undone.`}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                onClick={() => {
+                                    setConfirmOpen(false);
+                                    deletePost();
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </Container>
         </motion.div>
     ) : null;

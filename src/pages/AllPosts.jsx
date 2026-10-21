@@ -4,9 +4,12 @@ import appwriteService from "../appwrite/config";
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { Skeleton } from '../components/ui/skeleton';
+import { toast } from 'sonner';
 
 function AllPosts() {
     const [posts, setPosts] = useState([])
+    const [loading, setLoading] = useState(true)
     const userData = useSelector((state) => state.auth.userData)
     const pageRef = useRef(null)
 
@@ -17,7 +20,7 @@ function AllPosts() {
             if (posts) {
                 setPosts(posts.documents)
             }
-        })
+        }).finally(() => setLoading(false))
     }, [])
 
     const canManagePost = (post) => {
@@ -36,6 +39,9 @@ function AllPosts() {
             }
 
             setPosts((posts) => posts.filter((item) => item.$id !== post.$id))
+            toast.success('Post deleted')
+        } else {
+            toast.error('Could not delete this post. Please try again.')
         }
     }
 
@@ -53,6 +59,20 @@ function AllPosts() {
                 <h1 className='mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl'>Manage every post from one clean view.</h1>
                 <p className='mt-4 text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base'>Edit, delete, or review content in a layout that feels more like a product than a template.</p>
             </div>
+            {loading ? (
+                <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <div key={i} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/90 dark:border-slate-800 dark:bg-slate-900/90">
+                            <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                            <div className="space-y-3 p-5">
+                                <Skeleton className="h-4 w-16" />
+                                <Skeleton className="h-5 w-full" />
+                                <Skeleton className="h-4 w-2/3" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
             <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
                 {posts.map((post) => (
                     <div key={post.$id} data-reveal className='h-full hover-lift'>
@@ -64,6 +84,7 @@ function AllPosts() {
                     </div>
                 ))}
             </div>
+            )}
             </Container>
     </motion.div>
   )

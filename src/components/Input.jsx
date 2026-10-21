@@ -1,5 +1,6 @@
 import React, {useId} from 'react'
 import { Input as UiInput } from './ui/input'
+import { Label } from './ui/label'
 import { cn } from '../lib/utils'
 
 const Input = React.forwardRef( function Input({
@@ -11,11 +12,11 @@ const Input = React.forwardRef( function Input({
     const id = useId()
     return (
         <div className='w-full'>
-            {label && <label 
-            className='mb-2 inline-block pl-1 text-sm font-medium text-slate-700' 
+            {label && <Label
+            className='mb-2 inline-block pl-1 text-sm font-medium text-slate-700'
             htmlFor={id}>
                 {label}
-            </label>
+            </Label>
             }
             <UiInput
             type={type}

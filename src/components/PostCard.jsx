@@ -4,20 +4,40 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { Card, CardContent, CardFooter } from './ui/card'
 import { Badge } from './ui/badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog'
+import { CalendarDays, Clock, ImageOff, Pencil, Trash2 } from 'lucide-react'
 
-function PostCard({ $id, title, featuredImage, FeaturedImage, canManage = false, onDelete }) {
+function PostCard({ $id, title, featuredImage, FeaturedImage, $createdAt, content, canManage = false, onDelete }) {
   const navigate = useNavigate()
   const imageId = FeaturedImage || featuredImage
   const [imageError, setImageError] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const handleEdit = (event) => {
     event.preventDefault()
     navigate(`/edit-post/${$id}`)
   }
 
-  const handleDelete = (event) => {
-    event.preventDefault()
+  const handleConfirmDelete = () => {
     onDelete?.()
+    setConfirmOpen(false)
+  }
+
+  const formattedDate = $createdAt
+    ? new Date($createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : null
+
+  let readTime = null
+  if (content) {
+    const words = content.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length
+    readTime = `${Math.max(1, Math.round(words / 200))} min read`
   }
 
   return (
@@ -33,7 +53,8 @@ function PostCard({ $id, title, featuredImage, FeaturedImage, canManage = false,
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className='flex h-full w-full items-center justify-center text-sm font-medium text-slate-400 dark:text-slate-500'>
+              <div className='flex h-full w-full flex-col items-center justify-center gap-2 text-sm font-medium text-slate-400 dark:text-slate-500'>
+                <ImageOff className='h-6 w-6' />
                 No Image
               </div>
             )}
@@ -48,6 +69,22 @@ function PostCard({ $id, title, featuredImage, FeaturedImage, canManage = false,
           <h2 className='line-clamp-2 text-lg font-semibold leading-snug text-slate-900 dark:text-slate-50'>
             {title}
           </h2>
+          {(formattedDate || readTime) && (
+            <div className='flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400'>
+              {formattedDate && (
+                <span className='inline-flex items-center gap-1.5'>
+                  <CalendarDays className='h-3.5 w-3.5' />
+                  {formattedDate}
+                </span>
+              )}
+              {readTime && (
+                <span className='inline-flex items-center gap-1.5'>
+                  <Clock className='h-3.5 w-3.5' />
+                  {readTime}
+                </span>
+              )}
+            </div>
+          )}
           <p className='text-sm leading-6 text-slate-500 dark:text-slate-400'>
             Review the published version or open the editor for updates.
           </p>
@@ -57,13 +94,34 @@ function PostCard({ $id, title, featuredImage, FeaturedImage, canManage = false,
       {canManage && (
         <CardFooter className='flex gap-2 border-t border-slate-100 p-5 dark:border-slate-800'>
           <Button variant='secondary' className='w-full' onClick={handleEdit}>
+            <Pencil className='h-4 w-4' />
             Edit
           </Button>
-          <Button variant='destructive' className='w-full' onClick={handleDelete}>
+          <Button variant='destructive' className='w-full' onClick={() => setConfirmOpen(true)}>
+            <Trash2 className='h-4 w-4' />
             Delete
           </Button>
         </CardFooter>
       )}
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this post?</DialogTitle>
+            <DialogDescription>
+              {`This permanently deletes "${title}" and cannot be undone.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant='destructive' onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }

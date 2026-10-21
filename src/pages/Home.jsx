@@ -5,9 +5,11 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { gsap } from '../lib/gsap'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { Skeleton } from '../components/ui/skeleton'
 
 function Home() {
     const [posts, setPosts] = useState([])
+    const [loading, setLoading] = useState(true)
     const authStatus = useSelector((state) => state.auth.status)
     const homeRef = useRef(null)
 
@@ -16,7 +18,7 @@ function Home() {
             if (posts) {
                 setPosts(posts.documents)
             }
-        })
+        }).finally(() => setLoading(false))
     }, [])
 
     useLayoutEffect(() => {
@@ -35,6 +37,32 @@ function Home() {
     }, [posts.length])
 
     useScrollReveal(homeRef, [posts.length])
+
+    if (loading) {
+        return (
+            <div ref={homeRef} className="w-full py-10">
+                <Container>
+                    <div className="mb-8 max-w-2xl space-y-4">
+                        <Skeleton className="h-4 w-40" />
+                        <Skeleton className="h-10 w-2/3" />
+                        <Skeleton className="h-4 w-1/2" />
+                    </div>
+                    <div className='grid gap-6 sm:grid-cols-2 xl:grid-cols-4'>
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/90 dark:border-slate-800 dark:bg-slate-900/90">
+                                <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                                <div className="space-y-3 p-5">
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-5 w-full" />
+                                    <Skeleton className="h-4 w-2/3" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Container>
+            </div>
+        )
+    }
 
     if (posts.length === 0) {
         return (

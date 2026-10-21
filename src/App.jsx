@@ -46,6 +46,7 @@ import { Footer, Header } from './components'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useLenis } from './hooks/useLenis'
+import { Toaster } from './components/ui/sonner'
 import { ScrollTrigger } from './lib/gsap'
 import { scrollToTop } from './lib/lenis'
 
@@ -97,6 +98,8 @@ function App() {
 
       {/* Footer */}
       <Footer />
+
+      <Toaster />
 
     </div>
   ) : null

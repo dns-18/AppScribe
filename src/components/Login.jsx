@@ -91,6 +91,7 @@ import authService from "../appwrite/auth"
 import { useForm } from "react-hook-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { motion } from 'framer-motion'
+import { toast } from 'sonner'
 
 function Login() {
   const navigate = useNavigate()
@@ -105,6 +106,7 @@ function Login() {
       if (session) {
         const userData = await authService.getCurrentUser()
         if (userData) dispatch(authLogin({ userData }))
+        toast.success('Welcome back')
         navigate("/")
       }
     } catch (error) {

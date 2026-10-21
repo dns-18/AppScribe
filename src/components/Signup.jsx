@@ -97,6 +97,7 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { motion } from 'framer-motion'
+import { toast } from 'sonner'
 
 function Signup() {
   const navigate = useNavigate()
@@ -111,6 +112,7 @@ function Signup() {
       if (userData) {
         const currentUser = await authService.getCurrentUser()
         if (currentUser) dispatch(login({ userData: currentUser }))
+        toast.success('Account created — welcome to AppScribe')
         navigate("/")
       }
     } catch (error) {
