@@ -5,6 +5,7 @@ import appwriteService from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { toast } from "sonner";
 
 export default function PostForm({ post }) {
     const existingFeaturedImage = post?.FeaturedImage || post?.featuredImage;
@@ -57,6 +58,7 @@ export default function PostForm({ post }) {
                 });
 
                 if (dbPost) {
+                    toast.success(post ? 'Post updated' : 'Post published');
                     navigate(`/post/${dbPost.$id}`);
                 }
             } else {
@@ -77,6 +79,7 @@ export default function PostForm({ post }) {
                 });
 
                 if (dbPost) {
+                    toast.success(post ? 'Post updated' : 'Post published');
                     navigate(`/post/${dbPost.$id}`);
                 }
             }

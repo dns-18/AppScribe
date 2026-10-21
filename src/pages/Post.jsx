@@ -1,14 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../components/ui/dialog";
 import parse from "html-react-parser";
+import { pickCover } from "../lib/covers";
 import { useSelector } from "react-redux";
 import { motion } from 'framer-motion';
+import { gsap, ScrollTrigger } from "../lib/gsap";
+import { CalendarDays, Clock } from "lucide-react";
 
 export default function Post() {
     const [post, setPost] = useState(null);
     const [imageError, setImageError] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const progressRef = useRef(null);
     const { slug } = useParams();
     const navigate = useNavigate();
 
@@ -29,6 +42,35 @@ export default function Post() {
         } else navigate("/");
     }, [slug, navigate]);
 
+    useLayoutEffect(() => {
+        if (!post || !progressRef.current) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const ctx = gsap.context(() => {
+            gsap.to(progressRef.current, {
+                scaleX: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    start: 0,
+                    end: 'max',
+                    scrub: 0.3,
+                },
+            });
+        });
+
+        return () => ctx.revert();
+    }, [post?.$id]);
+
+    const formattedDate = post?.$createdAt
+        ? new Date(post.$createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        : null;
+
+    let readTime = null;
+    if (post?.content) {
+        const words = post.content.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
+        readTime = `${Math.max(1, Math.round(words / 200))} min read`;
+    }
+
     const deletePost = () => {
         appwriteService.deletePost(post.$id).then((status) => {
             if (status) {
@@ -47,6 +89,11 @@ export default function Post() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
+            <div
+                ref={progressRef}
+                className="fixed inset-x-0 top-0 z-50 h-1 origin-left bg-indigo-500"
+                style={{ transform: 'scaleX(0)' }}
+            />
             <Container>
                 <div className="mb-8 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.08)] animate-scale-in dark:border-slate-800 dark:bg-slate-900/90">
                     {featuredImage && !imageError ? (
@@ -57,19 +104,21 @@ export default function Post() {
                             onError={() => setImageError(true)}
                         />
                     ) : (
-                        <div className="flex h-[320px] w-full items-center justify-center rounded-[1.5rem] bg-slate-100 text-sm font-medium text-slate-400 dark:bg-slate-800 dark:text-slate-500">
-                            {featuredImage ? "Image could not be loaded" : "No Image"}
-                        </div>
+                        <img
+                            src={pickCover(post.$id || post.title || '')}
+                            alt=""
+                            className="h-[320px] w-full rounded-[1.5rem] object-cover"
+                        />
                     )}
 
                     {isAuthor && (
                         <div className="absolute right-6 top-6 flex gap-2">
                             <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-emerald-600">
+                                <Button className="bg-emerald-600 text-white hover:bg-emerald-700">
                                     Edit
                                 </Button>
                             </Link>
-                            <Button bgColor="bg-rose-600" onClick={deletePost}>
+                            <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
                                 Delete
                             </Button>
                         </div>
@@ -78,12 +127,52 @@ export default function Post() {
                 <div className="mb-6 max-w-4xl animate-fade-up">
                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-indigo-500">Post detail</p>
                     <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">{post.title}</h1>
+                    {(formattedDate || readTime) && (
+                        <div className="mt-4 flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                            {formattedDate && (
+                                <span className="inline-flex items-center gap-1.5">
+                                    <CalendarDays className="h-4 w-4" />
+                                    {formattedDate}
+                                </span>
+                            )}
+                            {readTime && (
+                                <span className="inline-flex items-center gap-1.5">
+                                    <Clock className="h-4 w-4" />
+                                    {readTime}
+                                </span>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <div className="glass-panel rounded-[2rem] px-6 py-8 sm:px-10 animate-fade-up stagger-1">
                     <div className="browser-css">
                         {parse(post.content)}
                     </div>
                 </div>
+                <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete this post?</DialogTitle>
+                            <DialogDescription>
+                                {`This permanently deletes "${post.title}" and cannot be undone.`}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                onClick={() => {
+                                    setConfirmOpen(false);
+                                    deletePost();
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </Container>
         </motion.div>
     ) : null;

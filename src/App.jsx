@@ -37,19 +37,32 @@
 
 // export default App
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useDispatch } from 'react-redux'
 import './App.css'
 import authService from "./appwrite/auth"
 import { login, logout } from "./store/authSlice"
-import { Footer, Header } from './components'
+import { Footer, Header, PageLoader } from './components'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useLenis } from './hooks/useLenis'
+import { Toaster } from './components/ui/sonner'
+import { ScrollTrigger } from './lib/gsap'
+import { scrollToTop } from './lib/lenis'
 
 function App() {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const location = useLocation()
+
+  useLenis()
+
+  useEffect(() => {
+    scrollToTop()
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh()
+    })
+  }, [location.pathname])
 
   useEffect(() => {
     authService.getCurrentUser()
@@ -79,12 +92,16 @@ function App() {
           exit={{ opacity: 0, y: -12, filter: 'blur(8px)' }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </motion.main>
       </AnimatePresence>
 
       {/* Footer */}
       <Footer />
+
+      <Toaster />
 
     </div>
   ) : null

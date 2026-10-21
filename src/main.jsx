@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { lazy } from 'react'
 import ReactDOM from 'react-dom/client'
 
 import './index.css'
 import './App.css'
+import 'lenis/dist/lenis.css'
 
 import App from './App.jsx'
 
@@ -15,15 +16,17 @@ import {
 } from 'react-router-dom'
 
 import Home from './pages/Home.jsx'
-import AddPost from './pages/AddPost.jsx'
-import Signup from './pages/Signup.jsx'
-import EditPost from './pages/EditPost.jsx'
-import Post from './pages/Post.jsx'
-import AllPosts from './pages/AllPosts.jsx'
+
+const AddPost = lazy(() => import('./pages/AddPost.jsx'))
+const Signup = lazy(() => import('./pages/Signup.jsx'))
+const EditPost = lazy(() => import('./pages/EditPost.jsx'))
+const Post = lazy(() => import('./pages/Post.jsx'))
+const AllPosts = lazy(() => import('./pages/AllPosts.jsx'))
+const NotFound = lazy(() => import('./pages/NotFound.jsx'))
+const Login = lazy(() => import('./components/Login.jsx'))
 
 import {
   AuthLayout,
-  Login,
 } from './components'
 import { ThemeProvider } from './components/theme-provider'
 
@@ -58,11 +61,7 @@ const router = createBrowserRouter([
 
       {
         path: '/all-posts',
-        element: (
-          <AuthLayout authentication>
-            <AllPosts />
-          </AuthLayout>
-        ),
+        element: <AllPosts />,
       },
 
       {
@@ -90,7 +89,7 @@ const router = createBrowserRouter([
 
       {
         path: '*',
-        element: <h1>404 Page Not Found</h1>,
+        element: <NotFound />,
       },
 
     ],
